@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+      "express": "latest",
+      "webtask-tools" : "latest",
+      "body-parser" : "latest",
+      "superagent" : "latest"
+    }
+   }

@@ -3,6 +3,7 @@
       "express": "latest",
       "webtask-tools" : "latest",
       "body-parser" : "latest",
-      "superagent" : "latest"
+      "superagent" : "latest",
+      "loggerithm" : "latest"
     }
    }

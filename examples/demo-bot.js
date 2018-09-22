@@ -1,4 +1,8 @@
 ///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
 //         SET UP / MIDDLEWARE         ////
 ///////////////////////////////////////////
 
@@ -14,6 +18,7 @@
 const Express = require('express');
 const Webtask = require('webtask-tools');
 const request = require('superagent');
+const logger = require('loggerithm')();
 const app = Express();
 
 //Use body parser middleware for json
@@ -37,6 +42,10 @@ app.use(challengeCheck);
 app.use(sanitizeInput);
 
 ///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
 //           HELPER FUNCTIONS          ////
 ///////////////////////////////////////////
 
@@ -57,13 +66,12 @@ app.post('/', (req, res) => {
     let _context = {};
 
     const createBotResponse = (options) => {
-
-        console.log(req.body);
-        console.log(req.webtaskContext.data.BOT_TOKEN);
-
         resetContext();
         _context["options"] = parseOptions(options);
-       
+
+        if(_context.options.logMessage && _context.options.logMessage === true ) {
+            logMessageBody(req.body);
+        }
     }
 
     const resetContext = () => {
@@ -71,7 +79,27 @@ app.post('/', (req, res) => {
     }
 
     const parseOptions = (options) => {
+
         return options;
+    }
+
+    const logMessageBody = (requestBody) => {
+        logger.log("info", "YOUR BOT TOKEN IS: " + `${req.webtaskContext.data.BOT_TOKEN}`.output);
+        logger.log("request", "THE MESSAGE YOUR BOT RECEIVED IS: ")
+        logger.output(parseMessageBody(requestBody));
+    }
+
+    const logBotResponse = (responseBody) => {
+        logger.log("response", "YOUR BOT RESPONDED WITH: ");
+        logger.output(parseMessageBody(responseBody));
+    }
+
+    const parseBotResponse = (responseBody) => {
+        return responseBody;
+    }
+
+    const parseMessageBody = (requestBody) => {
+        return requestBody;
     }
 
     const validateRequest = () => {
@@ -105,10 +133,12 @@ app.post('/', (req, res) => {
             .set('Authorization', auth)
             .send(_context["message"])
             .then( (response) => {
-                console.log(response.body);
+                if(_context.options.logResponse && _context.options.logResponse === true) {
+                    logBotResponse(response.body);
+                }
             })
             .catch( (error) => {
-                console.log(error);
+                logger.log("error", error);
             });
         }
     }
@@ -169,7 +199,7 @@ app.post('/', (req, res) => {
 //          v  YOUR CODE HERE  v       ////
 ///////////////////////////////////////////
 
-createBotResponse({noBots: true});
+createBotResponse({noBots: true, logMessage: true, logResponse: true});
 buildBasicMessage("Hello I've received your message!");
 sendMessageToUser();
 
@@ -239,4 +269,9 @@ sendMessageToUser();
 });
 
 module.exports = Webtask.fromExpress(app);
+
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
+///////////////////////////////////////////
 

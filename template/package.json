@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+      "express": "latest",
+      "webtask-tools" : "latest",
+      "body-parser" : "latest",
+      "superagent" : "latest",
+      "loggerithm" : "latest",
+      "sentiment" : "latest"
+    }
+   }
